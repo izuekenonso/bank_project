@@ -7,7 +7,7 @@ from ..serializers import AccountSerializer
 from django.contrib.auth.hashers import make_password
 from ..serializers import UserSerializer
 from django.db.transaction import atomic
-import random
+
 
 
 class UserApiView(APIView):

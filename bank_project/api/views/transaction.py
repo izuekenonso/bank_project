@@ -9,14 +9,15 @@ from django.contrib.auth.hashers import make_password
 from ..serializers import TransactionSerializer
 from django.db.transaction import atomic
 import random
+from rest_framework.permissions import IsAuthenticated
+
 
 class TransactionApiView(APIView):
     
-
-
-
     @atomic
     def post(self, request, *args, **kwargs):
+
+        permission_classes = (IsAuthenticated)
 
         data = {
             'user': request.data.get('user'),
@@ -30,6 +31,7 @@ class TransactionApiView(APIView):
             
             serializer.save()
 
+            self.update_user_account_balance(data)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -51,16 +53,17 @@ class TransactionApiView(APIView):
         new_amount = 0
 
         trxn_type = trxn_data['trxn_type']
-        trxn_amount = float(trxn_data['trxn_type'])
+        trxn_amount = float(trxn_data['trxn_amount'])
 
 
         account = Account.objects.get(user=trxn_data['user'])
 
+        print("-----=====")
+        print(account.account_balance)
+
         if account is not None:
             serializer = AccountSerializer(account)
             existing_amount = float(serializer.data['account_balance'])
-
-
 
             if (trxn_type == '1'):
                 new_amount = existing_amount + trxn_amount
