@@ -1,23 +1,18 @@
 from django.db import models
 from .User import CustomUser
-from .Account import Account
+from django.utils import timezone
+
 
 
 class Transaction(models.Model):
-    DEPOSIT = 1
-    WITHDRAWAL = 2
-    TRANSFER = 3
 
-    TRANSACTION_TYPE = [
-        (DEPOSIT, 'Deposit'),
-        (WITHDRAWAL, 'Withdrawal'),
-        (TRANSFER, 'Transfer'),
-    ]
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, blank = True, null = True )
-    transaction_type = models.CharField(choices=TRANSACTION_TYPE),
-    amount = models.DecimalField(max_digits=19, decimal_places=4),
-    timestamp = models.DateTimeField(auto_now_add = True, auto_now = False, blank = True)
-    updated = models.DateTimeField(auto_now = True, blank = True)
+    trxn_id = models.CharField(max_length=50, unique=True)
+    trxn_type = models.CharField(max_length=50)
+    trxn_amount = models.DecimalField(max_digits=19, decimal_places=4)
+    timestamp = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(default=timezone.now)
 
 
-
+    def __str__(self):
+        return self.trxn_type
